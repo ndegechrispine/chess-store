@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luxury Chess Sets | Premium Collection</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="announcement-bar">
+<p>International Orders Welcomed - Save 15%% with Coupon Code <strong>MORECHESS15</strong></p>
+</div>
+<div class="special-offer">
+<p>Today Only - Save 10%% with Coupon Code <strong>CHESS126</strong></p>
+</div>
+<header>
+<nav class="main-nav">
+<div class="logo"><h1>?? Luxury Chess Sets</h1></div>
+<div class="nav-links">
+<a href="#" class="active">All Sets</a>
+<a href="#">Wood</a>
+<a href="#">Metal</a>
+<a href="#">Stone</a>
+<a href="#">Glass</a>
+</div>
+</nav>
+</header>
+<main>
+<section class="hero">
+<h2>Luxury Chess Sets</h2>
+<p class="hero-text">For the player or collector looking for a special chess set, this collection of high-end luxury chess sets offers the very best of the best. Treat yourself or someone special to a chess set that will be treasured forever!</p>
+</section>
+<div class="controls">
+<div class="view-toggle">
+<span>Grid View:</span>
+<button id="gridView" class="active"><i class="fas fa-th"></i></button>
+<button id="listView"><i class="fas fa-list"></i></button>
+</div>
+<div class="filters">
+<select id="categoryFilter">
+<option value="all">All Categories</option>
+<option value="Wood">Wood</option>
+<option value="Metal">Metal</option>
+<option value="Stone">Stone</option>
+<option value="Glass">Glass</option>
+</select>
+<select id="priceFilter">
+<option value="all">All Prices</option>
+<option value="0-1000">Under $1,000</option>
+<option value="1000-2000">$1,000 - $2,000</option>
+<option value="2000-5000">$2,000 - $5,000</option>
+<option value="5000+">$5,000+</option>
+</select>
+</div>
+</div>
+<div class="products-grid" id="productsGrid"></div>
+</main>
+<div id="contactModal" class="modal">
+<div class="modal-content">
+<span class="close">&times;</span>
+<h3>Inquire About This Set</h3>
+<form id="contactForm">
+<input type="hidden" id="productId">
+<input type="hidden" id="productName">
+<input type="text" id="customerName" placeholder="Your Name" required>
+<input type="email" id="customerEmail" placeholder="Your Email" required>
+<input type="tel" id="phoneNumber" placeholder="Phone Number">
+<textarea id="message" placeholder="I'm interested in this chess set."></textarea>
+<div class="contact-options">
+<button type="button" class="whatsapp-btn" id="whatsappInquiry"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+<button type="button" class="call-btn" id="callInquiry"><i class="fas fa-phone"></i> Call</button>
+</div>
+<button type="submit" class="submit-inquiry">Send Inquiry</button>
+</form>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
