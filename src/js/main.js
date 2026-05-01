@@ -1,23 +1,35 @@
 const BUSINESS_PHONE = '+254768370394';
 const BUSINESS_WHATSAPP = '254768370394';
 
+const SUPABASE_URL = 'https://fhqnmizvmdeofhxodfpm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZocW5taXp2bWRlb2ZoeG9kZnBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NjA2NDYsImV4cCI6MjA5MzEzNjY0Nn0.dE0pClx2Dzwza18PbHKyuZsbWRPvHPebt9HP4wVcrCE';
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 let currentProducts = [];
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async function() {
     await loadProducts();
     setupEventListeners();
 });
 
 async function loadProducts() {
-    const products = await fetchProducts();
-    currentProducts = products;
-    renderProducts(products);
+    const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+    if (error) {
+        console.error('Error:', error);
+        return;
+    }
+    currentProducts = data;
+    renderProducts(data);
 }
 
 function renderProducts(products) {
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = '';
-    products.forEach(product => {
+    products.forEach(function(product) {
         grid.appendChild(createProductCard(product));
     });
 }
@@ -28,8 +40,31 @@ function createProductCard(product) {
     const hasDiscount = product.sale_price && product.sale_price < product.price;
     const price = hasDiscount ? product.sale_price : product.price;
     
-    card.innerHTML = '<div class="product-image"><img src="' + product.image_url + '" alt="' + product.name + '">' + (hasDiscount ? '<span class="discount-badge">-' + (product.discount_percentage || '') + '%</span>' : '') + '</div><div class="product-info"><h3 class="product-name">' + product.name + '</h3><p class="product-description">' + product.description.substring(0, 100) + '...</p><div class="price-section">' + (hasDiscount ? '<span class="original-price">$' + product.price.toLocaleString() + '</span> <span class="sale-price">$' + price.toLocaleString() + '</span>' : '<span class="regular-price">$' + price.toLocaleString() + '</span>') + '</div><div class="action-buttons"><button class="whatsapp-btn" onclick="openWhatsApp(\'' + product.name + '\', ' + price + ')"><i class="fab fa-whatsapp"></i> WhatsApp</button><button class="call-btn" onclick="callNow()"><i class="fas fa-phone"></i> Call</button></div><button class="inquire-btn" onclick="openInquiryForm(\'' + product.name + '\', \'' + product.id + '\')"><i class="fas fa-envelope"></i> Send Inquiry</button></div>';
+    let html = '<div class="product-image">';
+    html += '<img src="' + product.image_url + '" alt="' + product.name + '">';
+    if (hasDiscount) {
+        html += '<span class="discount-badge">-' + (product.discount_percentage || '') + '%</span>';
+    }
+    html += '</div>';
+    html += '<div class="product-info">';
+    html += '<h3 class="product-name">' + product.name + '</h3>';
+    html += '<p class="product-description">' + product.description.substring(0, 100) + '...</p>';
+    html += '<div class="price-section">';
+    if (hasDiscount) {
+        html += '<span class="original-price">$' + product.price.toLocaleString() + '</span> ';
+        html += '<span class="sale-price">$' + price.toLocaleString() + '</span>';
+    } else {
+        html += '<span class="regular-price">$' + price.toLocaleString() + '</span>';
+    }
+    html += '</div>';
+    html += '<div class="action-buttons">';
+    html += '<button class="whatsapp-btn" onclick="openWhatsApp(\'' + product.name + '\', ' + price + ')"><i class="fab fa-whatsapp"></i> WhatsApp</button>';
+    html += '<button class="call-btn" onclick="callNow()"><i class="fas fa-phone"></i> Call</button>';
+    html += '</div>';
+    html += '<button class="inquire-btn" onclick="openInquiryForm(\'' + product.name + '\', \'' + product.id + '\')"><i class="fas fa-envelope"></i> Send Inquiry</button>';
+    html += '</div>';
     
+    card.innerHTML = html;
     return card;
 }
 
@@ -46,6 +81,14 @@ function openInquiryForm(productName, productId) {
     document.getElementById('productName').value = productName;
     document.getElementById('productId').value = productId;
     document.getElementById('contactModal').style.display = 'block';
+}
+
+async function submitInquiry(inquiryData) {
+    const { error } = await supabase
+        .from('contact_inquiries')
+        .insert([inquiryData]);
+    if (error) { console.error('Error:', error); return false; }
+    return true;
 }
 
 function setupEventListeners() {
